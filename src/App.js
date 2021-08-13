@@ -23,8 +23,8 @@ const uploadHandler = (e) => {
   setImgsrc(URL.createObjectURL(file))
 }
 
-const imgResize = (natH, natW) => {
-  return ~~((480 * natW)/natH);
+const imgResize = (natH, natW, newH) => {
+  return ~~((newH * natW)/natH);
 }
 
 const openHandler = (e) => {
@@ -35,8 +35,9 @@ const openHandler = (e) => {
   i.src = imgSrc;
   console.log(i);
   i.onload = () => {
-      setImgsrcH(480);
-      setImgsrcW(imgResize(i.naturalHeight, i.naturalWidth));
+    const newH = 480;
+    setImgsrcH(newH);
+    setImgsrcW(imgResize(i.naturalHeight, i.naturalWidth, newH));
   }
   setShowImg(true);
 }
@@ -45,15 +46,11 @@ const closeHandler = (e) => {
   setShowImg(false);
 }
 
-const zoomFact = 100;
-const zoomInHandler = (e) => {
-  setImgsrcH(imgSrcH + zoomFact);
-  setImgsrcW(imgSrcW + zoomFact );
-}
-
-const zoomOutHandler = (e) => {
-  setImgsrcH(imgSrcH - zoomFact);
-  setImgsrcW(imgSrcW - zoomFact);
+const zoomHandler = (fact) => (e) => {
+  const newH = imgSrcH + fact;
+  const newW = imgResize(imgSrcH, imgSrcW, newH);
+  setImgsrcH(newH);
+  setImgsrcW(newW);
 }
 
   return (
@@ -66,17 +63,17 @@ const zoomOutHandler = (e) => {
 
               <div className="img_cont" >
                 <div className="img_frame" >
-                  {showImg && <img src={imgSrc} height={imgSrcH} width={imgSrcW} />}
+                  {showImg && <img alt="" src={imgSrc} height={imgSrcH} width={imgSrcW} />}
                 </div>
               </div>
               {showImg && <div className="control_cont" >
                 <Tooltip title="Zoom in" enterDelay={1000}>
-                  <IconButton color="primary" onClick={zoomInHandler}>
+                  <IconButton color="primary" onClick={zoomHandler(50)}>
                     <ZoomInIcon fontSize="large" />
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="Zoom out" enterDelay={1000}>
-                  <IconButton color="primary" onClick={zoomOutHandler}>
+                  <IconButton color="primary" onClick={zoomHandler(-50)}>
                     <ZoomOutIcon fontSize="large" />
                   </IconButton>
                 </Tooltip>
