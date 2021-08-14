@@ -2,6 +2,7 @@
 import { IconButton, Tooltip, Button } from '@material-ui/core';
 import ZoomInIcon from '@material-ui/icons/ZoomIn';
 import ZoomOutIcon from '@material-ui/icons/ZoomOut';
+import YoutubeSearchedForIcon from '@material-ui/icons/YoutubeSearchedFor';
 import { useState } from 'react';
 import './App.css'
 
@@ -10,6 +11,7 @@ function App() {
   const [imgSrcH, setImgsrcH] = useState();
   const [imgSrcW, setImgsrcW] = useState();
   const [showImg, setShowImg] = useState(false);
+  const fixH = 480;
 
 
 const uploadHandler = (e) => {
@@ -35,9 +37,8 @@ const openHandler = (e) => {
   i.src = imgSrc;
   console.log(i);
   i.onload = () => {
-    const newH = 480;
-    setImgsrcH(newH);
-    setImgsrcW(imgResize(i.naturalHeight, i.naturalWidth, newH));
+    setImgsrcH(fixH);
+    setImgsrcW(imgResize(i.naturalHeight, i.naturalWidth, fixH));
   }
   setShowImg(true);
 }
@@ -75,6 +76,11 @@ const zoomHandler = (fact) => (e) => {
                 <Tooltip title="Zoom out" enterDelay={1000}>
                   <IconButton color="primary" onClick={zoomHandler(-50)}>
                     <ZoomOutIcon fontSize="large" />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Restore" enterDelay={1000}>
+                  <IconButton color="primary" onClick={zoomHandler(fixH - imgSrcH)}>
+                    <YoutubeSearchedForIcon fontSize="large" />
                   </IconButton>
                 </Tooltip>
               </div>}
