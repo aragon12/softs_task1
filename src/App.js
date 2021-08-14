@@ -1,5 +1,6 @@
 
-import { IconButton, Tooltip, Button } from '@material-ui/core';
+import { IconButton, Tooltip, Button, Collapse } from '@material-ui/core';
+import Alert from '@material-ui/lab/Alert';
 import RotateLeftIcon from '@material-ui/icons/RotateLeft';
 import RotateRightIcon from '@material-ui/icons/RotateRight';
 import ZoomInIcon from '@material-ui/icons/ZoomIn';
@@ -15,19 +16,38 @@ function App() {
   const [showImg, setShowImg] = useState(false);
   const [imgRotation, setImgRotation] = useState(0);
   const [showControls, setShowControls] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [alert, setAlert] = useState(false);
 
   const fixH = 480;
   const toolTipDelay = 700;
 
+const isImage = (file) => {
+  return file['type'].split('/')[0]==='image';
+}
+
 const uploadHandler = (e) => {
  if(!e.target.files.length){
+   setIsOpen(false);
    setShowControls(false);
    setShowImg(false);
    setImgsrc(undefined);
     return;
   }
+
   const file = e.target.files[0];
+  if(!isImage(file)) {
+    setIsOpen(false);
+    setShowControls(false);
+    setShowImg(false);
+    setImgsrc(undefined);
+    setAlert(true);
+    return;
+  }
+
   setShowImg(false);
+  setIsOpen(true);
+  setAlert(false);
   setImgsrc(URL.createObjectURL(file))
 }
 
@@ -47,6 +67,7 @@ const openHandler = (e) => {
     setImgsrcW(imgResize(i.naturalHeight, i.naturalWidth, fixH));
   }
   setImgRotation(0);
+  setIsOpen(false);
   setShowImg(true);
   setShowControls(true);
 }
@@ -54,6 +75,7 @@ const openHandler = (e) => {
 const closeHandler = (e) => {
   setShowControls(false);
   setShowImg(false);
+  setIsOpen(true);
 }
 
 const zoomHandler = (fact) => (e) => {
@@ -71,13 +93,17 @@ const rotateHandler = (angle) => (e) => {
   return (
           <div className="maincont">
             <div class="inst_cont">
+              <span style={{paddingRight: '24px'}}>To start, first upload an image:</span>
               <input type="file" accept="image/*" onChange={uploadHandler} />
-              <Button color="primary" onClick={openHandler} >Open</Button>
-              {showImg && <Button color="primary" onClick={closeHandler} >Close</Button>}
+              <Button color="primary" onClick={openHandler} disabled={!isOpen} >Open</Button>
+              {showImg && <Button color="primary" onClick={closeHandler} >Close</Button>}<br />
               </div>
 
               <div className="img_cont" >
                 <div className="img_frame" >
+                  <Collapse in={alert}>
+                    <Alert severity="error">Not an image file</Alert>
+                  </Collapse>
                   {showImg && <img alt="" style={{transform: `rotate(${imgRotation}deg)`}} src={imgSrc} height={imgSrcH} width={imgSrcW} />}
                 </div>
               </div>
