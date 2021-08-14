@@ -14,14 +14,16 @@ function App() {
   const [imgSrcW, setImgsrcW] = useState();
   const [showImg, setShowImg] = useState(false);
   const [imgRotation, setImgRotation] = useState(0);
+  const [showControls, setShowControls] = useState(false);
 
   const fixH = 480;
   const toolTipDelay = 700;
 
 const uploadHandler = (e) => {
  if(!e.target.files.length){
-   setImgsrc(undefined);
+   setShowControls(false);
    setShowImg(false);
+   setImgsrc(undefined);
     return;
   }
   const file = e.target.files[0];
@@ -46,9 +48,11 @@ const openHandler = (e) => {
   }
   setImgRotation(0);
   setShowImg(true);
+  setShowControls(true);
 }
 
 const closeHandler = (e) => {
+  setShowControls(false);
   setShowImg(false);
 }
 
@@ -77,33 +81,33 @@ const rotateHandler = (angle) => (e) => {
                   {showImg && <img alt="" style={{transform: `rotate(${imgRotation}deg)`}} src={imgSrc} height={imgSrcH} width={imgSrcW} />}
                 </div>
               </div>
-              {showImg && <div className="control_cont" >
+              <div className="control_cont" >
               <Tooltip title="Rotate Left" enterDelay={toolTipDelay}>
-                  <IconButton color="primary" onClick={rotateHandler(-90)}>
+                  <IconButton color="primary" onClick={rotateHandler(-90)} disabled={!showControls}>
                     <RotateLeftIcon fontSize="large" />
                   </IconButton>
                 </Tooltip>
               <Tooltip title="Rotate Right" enterDelay={toolTipDelay}>
-                  <IconButton color="primary" onClick={rotateHandler(90)}>
+                  <IconButton color="primary" onClick={rotateHandler(90)} disabled={!showControls}>
                     <RotateRightIcon fontSize="large" />
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="Zoom in" enterDelay={toolTipDelay}>
-                  <IconButton color="primary" onClick={zoomHandler(50)}>
+                  <IconButton color="primary" onClick={zoomHandler(50)} disabled={!showControls}>
                     <ZoomInIcon fontSize="large" />
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="Zoom out" enterDelay={toolTipDelay}>
-                  <IconButton color="primary" onClick={zoomHandler(-50)}>
+                  <IconButton color="primary" onClick={zoomHandler(-50)} disabled={!showControls}>
                     <ZoomOutIcon fontSize="large" />
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="Restore" enterDelay={toolTipDelay}>
-                  <IconButton color="primary" onClick={zoomHandler(fixH - imgSrcH)}>
+                  <IconButton color="primary" onClick={zoomHandler(fixH - imgSrcH)} disabled={!showControls}>
                     <YoutubeSearchedForIcon fontSize="large" />
                   </IconButton>
                 </Tooltip>
-              </div>}
+              </div>
           </div>
   );
 }
