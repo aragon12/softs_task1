@@ -1,18 +1,22 @@
 
 import { IconButton, Tooltip, Button } from '@material-ui/core';
+import RotateLeftIcon from '@material-ui/icons/RotateLeft';
+import RotateRightIcon from '@material-ui/icons/RotateRight';
 import ZoomInIcon from '@material-ui/icons/ZoomIn';
 import ZoomOutIcon from '@material-ui/icons/ZoomOut';
 import YoutubeSearchedForIcon from '@material-ui/icons/YoutubeSearchedFor';
 import { useState } from 'react';
-import './App.css'
+import './App.css';
 
 function App() {
   const [imgSrc, setImgsrc] = useState();
   const [imgSrcH, setImgsrcH] = useState();
   const [imgSrcW, setImgsrcW] = useState();
   const [showImg, setShowImg] = useState(false);
-  const fixH = 480;
+  const [imgRotation, setImgRotation] = useState(0);
 
+  const fixH = 480;
+  const toolTipDelay = 700;
 
 const uploadHandler = (e) => {
  if(!e.target.files.length){
@@ -40,6 +44,7 @@ const openHandler = (e) => {
     setImgsrcH(fixH);
     setImgsrcW(imgResize(i.naturalHeight, i.naturalWidth, fixH));
   }
+  setImgRotation(0);
   setShowImg(true);
 }
 
@@ -54,6 +59,11 @@ const zoomHandler = (fact) => (e) => {
   setImgsrcW(newW);
 }
 
+const rotateHandler = (angle) => (e) => {
+  const newImgRotation = imgRotation + angle;
+  setImgRotation(newImgRotation);
+}
+
   return (
           <div className="maincont">
             <div class="inst_cont">
@@ -64,21 +74,31 @@ const zoomHandler = (fact) => (e) => {
 
               <div className="img_cont" >
                 <div className="img_frame" >
-                  {showImg && <img alt="" src={imgSrc} height={imgSrcH} width={imgSrcW} />}
+                  {showImg && <img alt="" style={{transform: `rotate(${imgRotation}deg)`}} src={imgSrc} height={imgSrcH} width={imgSrcW} />}
                 </div>
               </div>
               {showImg && <div className="control_cont" >
-                <Tooltip title="Zoom in" enterDelay={1000}>
+              <Tooltip title="Rotate Left" enterDelay={toolTipDelay}>
+                  <IconButton color="primary" onClick={rotateHandler(-90)}>
+                    <RotateLeftIcon fontSize="large" />
+                  </IconButton>
+                </Tooltip>
+              <Tooltip title="Rotate Right" enterDelay={toolTipDelay}>
+                  <IconButton color="primary" onClick={rotateHandler(90)}>
+                    <RotateRightIcon fontSize="large" />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Zoom in" enterDelay={toolTipDelay}>
                   <IconButton color="primary" onClick={zoomHandler(50)}>
                     <ZoomInIcon fontSize="large" />
                   </IconButton>
                 </Tooltip>
-                <Tooltip title="Zoom out" enterDelay={1000}>
+                <Tooltip title="Zoom out" enterDelay={toolTipDelay}>
                   <IconButton color="primary" onClick={zoomHandler(-50)}>
                     <ZoomOutIcon fontSize="large" />
                   </IconButton>
                 </Tooltip>
-                <Tooltip title="Restore" enterDelay={1000}>
+                <Tooltip title="Restore" enterDelay={toolTipDelay}>
                   <IconButton color="primary" onClick={zoomHandler(fixH - imgSrcH)}>
                     <YoutubeSearchedForIcon fontSize="large" />
                   </IconButton>
